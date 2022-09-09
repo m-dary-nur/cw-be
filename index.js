@@ -1,6 +1,6 @@
 const express = require('express');
 
-const v1 = require('./routes/v1/index.route');
+const v1 = require('./src/routes/v1/index.route');
 
 const app = express();
 const port = 3000;
