@@ -18,6 +18,7 @@ const carrierDef = gql`
 
 	type Query {
 		getCarriers: [Carrier]
+		getCarrier: Carrier
 	}
 `;
 

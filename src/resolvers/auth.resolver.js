@@ -1,28 +1,14 @@
 const jwt = require('jsonwebtoken');
 
-const { executeSqlQuery } = require('../../utils/query');
-const { camelCaseKeys } = require('../../utils/case');
+const { executeSqlQuery } = require('../utils/query');
 
 const authResolvers = {
-	Query: {
-		menuGetAll: async (_, __, { user }) => {
-			try {
-				const [data] = await executeSqlQuery({
-					query: `CALL getMenuByClientId(?)`,
-					values: [user.client],
-				});
-				return data.map(camelCaseKeys);
-			} catch (error) {
-				throw error;
-			}
-		},
-	},
 	Mutation: {
 		signIn: async (_, { email, password, authType }) => {
 			const jwtKey = process.env.JWT_SECRET;
 			try {
 				const [foundAccount] = await executeSqlQuery({
-					query: 'SELECT * FROM carrier WHERE email = ? AND password = ?',
+					query: `SELECT * FROM ${authType} WHERE email = ? AND password = ?`,
 					values: [email, password],
 				});
 
@@ -39,21 +25,16 @@ const authResolvers = {
 						}
 					);
 
-					const [result] = await executeSqlQuery({
+					const [[result]] = await executeSqlQuery({
 						query: 'CALL sign_in(?, ?, ?, ?)',
 						values: [email, password, token, authType],
 					});
 
-					if (result.message === 'ok') {
-						return {
-							session_token: token,
-						};
-					}
-
 					return {
-						session_token: null,
+						session_token: result.session_token,
 					};
 				}
+
 				return null;
 			} catch (error) {
 				throw error;

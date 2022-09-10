@@ -16,6 +16,17 @@ const userResolver = {
 				throw error;
 			}
 		},
+		getUser: async (_, __, { id, authType }) => {
+			try {
+				const [[data]] = await executeSqlQuery({
+					query: `call get_session(?, ?)`,
+					values: [id, authType],
+				});
+				return camelCaseKeys(data);
+			} catch (error) {
+				throw error;
+			}
+		},
 	},
 	// Subscription: {
 	// 	userOnChanged: {

@@ -16,6 +16,7 @@ const userDef = gql`
 
 	type Query {
 		getUsers: [User]
+		getUser: User
 	}
 `;
 

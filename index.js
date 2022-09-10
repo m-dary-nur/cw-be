@@ -4,9 +4,9 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { createServer } = require('http');
 // const { WebSocketServer } = require('ws');
+// const { useServer } = require('graphql-ws/lib/use/ws');
 const { ApolloServer } = require('apollo-server-express');
 const { applyMiddleware } = require('graphql-middleware');
-const { useServer } = require('graphql-ws/lib/use/ws');
 const { mergeResolvers, mergeTypeDefs } = require('@graphql-tools/merge');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const {
@@ -17,6 +17,7 @@ const {
 
 const defs = require('./src/typedefs');
 const resolvers = require('./src/resolvers');
+const { graphqlPermissions } = require('./src/configs/shield');
 
 dotenv.config();
 
@@ -38,6 +39,10 @@ const decodeToken = async (token) => {
 	try {
 		const { exp, ...decoded } = jwt.verify(token, process.env.JWT_SECRET || '');
 
+		if (Date.now() >= exp * 1000) {
+			return false;
+		}
+
 		if (decoded) {
 			return decoded;
 		}
@@ -57,7 +62,7 @@ const createAolloServer = async (app, httpServer) => {
 			typeDefs: mergeTypeDefs(loadTypeDefs),
 			resolvers: mergeResolvers(loadResolvers),
 		}),
-		// graphqlPermissions
+		graphqlPermissions
 	);
 
 	// const wsServer = new WebSocketServer({
@@ -106,16 +111,25 @@ const createAolloServer = async (app, httpServer) => {
 			// },
 		],
 		context: async ({ req }) => {
-			if (req.headers.authorization) {
-				const [bearerToken, token] = req.headers.authorization.split(' ') || '';
+			const { authorization, Authorization } = req.headers;
+
+			if (authorization || Authorization) {
+				const sessionToken = authorization || Authorization;
+				const [bearerToken, token] = sessionToken.split(' ');
+
 				if (bearerToken === 'Bearer' && token && token !== 'undefined') {
 					const decodedToken = await decodeToken(token);
-					return decodedToken;
+
+					if (decodedToken) {
+						return decodedToken;
+					}
+
+					return 'Token expired.';
 				} else {
-					throw new Error('Token expired.');
+					throw new Error('Token invalid.');
 				}
 			} else {
-				return null;
+				return 'empty';
 			}
 		},
 	});
@@ -124,9 +138,9 @@ const createAolloServer = async (app, httpServer) => {
 
 	apolloServer.applyMiddleware({ app, path: '/graphql' });
 
-	// httpServer.listen(port, () => {
-	// 	console.log(`🚀 Graphql is ready at endpoint /graphql`);
-	// });
+	httpServer.listen(4000, () => {
+		console.log(`🚀 Graphql is ready at endpoint /graphql`);
+	});
 };
 
 createAolloServer(app, httpServer);

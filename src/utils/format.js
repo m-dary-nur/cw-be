@@ -1,7 +1,14 @@
 const { camelCase, mapKeys } = require('lodash');
 
 const camelCaseKeys = (obj) => {
-	return mapKeys(obj, (_, k) => camelCase(k));
+	// return Object.entries(obj).map(([v, k]) => ([
+	// 	camelCase(k),
+	// 	typeof date.getMonth === 'function' ? moment(v).format()
+	// ]))
+
+	return mapKeys(obj, (v, k) => {
+		return camelCase(k);
+	});
 };
 
 module.exports = {

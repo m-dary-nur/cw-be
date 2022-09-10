@@ -37,6 +37,9 @@ const rootResolver = {
 		name: 'Date',
 		description: 'Date custom scalar type',
 		parseValue(value) {
+			return new Date(value);
+		},
+		serialize(value) {
 			return moment(value).format('YYYY-MM-DD');
 		},
 	}),
@@ -44,19 +47,28 @@ const rootResolver = {
 		name: 'Time',
 		description: 'Time custom scalar type',
 		parseValue(value) {
-			return moment(value).format('HH:mm:ss');
+			return new Date(value);
+		},
+		serialize(value) {
+			return moment(value).format('HH:mm');
 		},
 	}),
 	Datetime: new GraphQLScalarType({
 		name: 'Datetime',
 		description: 'Datetime custom scalar type',
 		parseValue(value) {
-			return moment(value).format('YYYY-MM-DD HH:mm:ss');
+			return new Date(value);
+		},
+		serialize(value) {
+			return moment(value).format('YYYY-MM-DD HH:mm');
 		},
 	}),
 	Decimal: new GraphQLScalarType({
 		name: 'Decimal',
 		description: 'Decimal custom scalar type for currency',
+		parseValue(value) {
+			return Big(value);
+		},
 		serialize(value) {
 			return new Big(value);
 		},
@@ -68,10 +80,6 @@ const rootResolver = {
 			}
 
 			return Big(ast.value);
-		},
-
-		parseValue(value) {
-			return Big(value);
 		},
 	}),
 };
