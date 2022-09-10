@@ -21,7 +21,7 @@ const { graphqlPermissions } = require('./src/configs/shield');
 
 dotenv.config();
 
-const allowlist = ['http://localhost:3000', 'http://localhost:3001'];
+const allowlist = ['*', 'http://localhost:3000', 'http://localhost:3001'];
 const corsOptionsDelegate = () => {
 	return {
 		origin: allowlist,
@@ -136,11 +136,11 @@ const createAolloServer = async (app, httpServer) => {
 
 	await apolloServer.start();
 
-	apolloServer.applyMiddleware({ app, path: '/graphql' });
+	apolloServer.applyMiddleware({ app, path: '/' });
 
-	httpServer.listen(4000, () => {
-		console.log(`🚀 Graphql is ready at endpoint /graphql`);
-	});
+	// httpServer.listen(4000, () => {
+	// 	console.log(`🚀 Graphql is ready at endpoint /`);
+	// });
 };
 
 createAolloServer(app, httpServer);

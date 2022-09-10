@@ -1,8 +1,4 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "rewrites": [{ "source": "/(.*)", "destination": "/graphql" }]
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/graphql" }]
 }
