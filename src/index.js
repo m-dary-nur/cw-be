@@ -15,9 +15,9 @@ const {
 	ApolloServerPluginLandingPageGraphQLPlayground,
 } = require('apollo-server-core');
 
-const defs = require('./src/typedefs');
-const resolvers = require('./src/resolvers');
-const { graphqlPermissions } = require('./src/configs/shield');
+const defs = require('./typedefs');
+const resolvers = require('./resolvers');
+const { graphqlPermissions } = require('./configs/shield');
 
 dotenv.config();
 
@@ -136,7 +136,7 @@ const createAolloServer = async (app, httpServer) => {
 
 	await apolloServer.start();
 
-	apolloServer.applyMiddleware({ app, path: '/' });
+	apolloServer.applyMiddleware({ app });
 
 	// httpServer.listen(4000, () => {
 	// 	console.log(`🚀 Graphql is ready at endpoint /`);

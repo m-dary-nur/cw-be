@@ -2,9 +2,9 @@
   "name": "carrywise",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon -e js index.js",
+    "start": "nodemon -e js src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "qesya (pasquale.palena@gmail.com)",
