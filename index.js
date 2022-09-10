@@ -138,8 +138,8 @@ const createAolloServer = async (app, httpServer) => {
 
 	apolloServer.applyMiddleware({ app, path: '/graphql' });
 
-	httpServer.listen(4000, () => {
-		console.log(`🚀 Graphql is ready at endpoint /`);
+	httpServer.listen(3000, () => {
+		console.log(`🚀 Graphql is ready`);
 	});
 };
 
